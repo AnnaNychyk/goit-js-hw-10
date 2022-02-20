@@ -21,32 +21,36 @@ refs.searchBox.addEventListener('input', debounce(findCountryName, DEBOUNCE_DELA
 function findCountryName(e) {
     countryName = e.target.value.trim();
     clearInput();
-    fetchCountries(countryName)
-        .then(name => {
-            let letters = name.length;
-            // console.log(letters);
-        /* если в массиве больше чем 10 стран, появляется уведомление */
-            if (letters > 10) {
-                return Notify.info(`Too many matches found. Please enter a more specific name`);
-            }
-        /* если в массиве от 2-х до 10-х стран, отображаем список найденных стран */
-            else if (letters >= 2 && letters <= 10) {
-                renderCountriesList(name);
-            }
-        /* если массив с 1 страной, то отображаются данные этой страны */
-            else if (letters === 1) {
-                renderCountriesInfo(name);
-            }
-        })
-        .catch(onFetchError);
-}
-
-function onFetchError(error) {
-    console.log(error);
 
     if (countryName !== '') {
-        Notify.failure(`Oops, there is no country with that name`);
+        fetchCountries(countryName)
+            .then(name => {
+                let letters = name.length;
+                // console.log(letters);
+            
+                /* если в массиве больше чем 10 стран, появляется уведомление */
+                if (letters > 10) {
+                    return Notify.info(`Too many matches found. Please enter a more specific name`);
+                }
+                /* если в массиве от 2-х до 10-х стран, отображаем список найденных стран */
+                else if (letters >= 2 && letters <= 10) {
+                    renderCountriesList(name);
+                }
+                /* если массив с 1 страной, то отображаются данные этой страны */
+                else if (letters === 1) {
+                    renderCountriesInfo(name);
+                }
+            }).catch(onFetchError);
+    } else {
+        Notify.info(`Please enter country name`);
     }
+    
+}
+
+
+function onFetchError(error) {
+    // console.log(error);
+    Notify.failure(`Oops, there is no country with that name`);
 }
 
 function clearInput() {
